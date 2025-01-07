@@ -1,99 +1,121 @@
+<svelte:options runes="{true}" />
 <script lang="ts">
-    import { onMount } from "svelte";
+    let { left_team, right_team, current_satz, old_satz = $bindable() } = $props();
+    let aufschlag = $state(0);
 
-    let { heim_team, gast_team} = $props();
-
-    let loc_heim_team = $state([]);
-    let loc_gast_team = $state([]);
-
-    onMount(() => {
-        loc_heim_team = heim_team;
-        loc_gast_team = gast_team;
-    })
+    $effect(() => {
+        console.log("Current Satz: ", current_satz);
+        console.log("Old Satz: ", old_satz);
+        if (current_satz[0] > old_satz[0]) {
+            aufschlag = current_satz[0] % 2 === 0 ? 0 : 1;
+            old_satz = current_satz;
+        }
+        if (current_satz[1] > old_satz[1]) {
+            aufschlag = current_satz[1] % 2 === 0 ? 2 : 3;
+            old_satz = current_satz;
+        }
+        console.log("aufschlag: ", aufschlag);
+    });
 </script>
-
 
 <div class="spielfeld_container">
     <div class="image_container">
-        <img src="Feld.png" alt="Badminton Spielfeld" class="responsive-image">
+        <img src="Feld.png" alt="Badminton Spielfeld">
         <div class="overlay">
-            <div class="corner top-left">{loc_heim_team[0]}</div>
-            <div class="corner top-right">{loc_gast_team[0]}</div>
-            <div class="corner bottom-left">{loc_heim_team[1]}</div>
-            <div class="corner bottom-right">{loc_gast_team[1]}</div>
+            <div class="corner top-left">
+                <div class="text_wrap" style="color: {aufschlag == 1 ? 'green' : 'white'}">
+                    {left_team[0]}
+                </div>
+            </div>
+            <div class="corner top-right">
+                <div class="text_wrap" style="color: {aufschlag == 2 ? 'green' : 'white'}">
+                    {right_team[0]}
+                </div>
+            </div>
+            <div class="corner bottom-left">
+                <div class="text_wrap" style="color: {aufschlag == 0 ? 'green' : 'white'}">
+                    {left_team[1]}
+                </div>
+            </div>
+            <div class="corner bottom-right">
+                <div class="text_wrap" style="color: {aufschlag == 3 ? 'green' : 'white'}">
+                    {right_team[1]}
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-
 <style>
     .spielfeld_container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
         width: 100%;
-        height: 100%;
+        max-width: 600px;
+        height: auto;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+
+    .image_container {
         position: relative;
+        width: 100%;
+        height: auto;
         display: flex;
         justify-content: center;
         align-items: center;
     }
 
-    .image_container {
-        position: relative; /* Establishes a positioning context for the overlay */
-        display: flex; /* Enables flexbox for centering child elements */
-        justify-content: center; /* Centers horizontally */
-        align-items: center; /* Centers vertically */
-    }
-
-    .responsive-image {
-        width: 100%; /* Ensures the image is responsive */
-        height: auto; /* Maintains aspect ratio */
-        display: block; /* Removes inline-block spacing issues */
-    }
-
     .overlay {
         position: absolute;
-        width: 84.5%;
-        height: 82.5%;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
         color: white;
         text-align: center;
         display: flex;
         justify-content: center;
         align-items: center;
-        font-size: 80px;
         font-weight: bold;
-        
+        pointer-events: none;
     }
 
     .corner {
-        position: absolute; /* Allows placement in specific corners */
-        padding: 10px; /* Optional: Adjust padding as needed */
-        background: rgba(255, 255, 255, 0.2); /* Optional: Background for visibility */
-        color: white; /* Text color */
-        width: 32.5%;
-        height: 46.4%;
+        position: absolute;
+        width: 28.7%;
+        height: 40.5%;
         display: flex;
         justify-content: center;
         align-items: center;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        background-color: rgba(105, 105, 105, 0.25);
     }
 
     .top-left {
-        top: 0;
-        left: 0;
+        top: 9%;
+        left: 7.7%;
     }
 
     .top-right {
-        top: 0;
-        right: 0;
+        top: 9%;
+        right: 7.7%;
     }
 
     .bottom-left {
-        bottom: 0;
-        left: 0;
+        bottom: 9%;
+        left: 7.7%;
     }
 
     .bottom-right {
-        bottom: 0;
-        right: 0;
+        bottom: 9%;
+        right: 7.7%;
+    }
+
+    .text_wrap {
+        font-size: 2rem;
+        max-width: 100%;
+        overflow: hidden;
+        white-space: nowrap;
     }
 </style>
