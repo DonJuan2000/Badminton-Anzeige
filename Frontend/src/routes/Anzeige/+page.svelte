@@ -1,6 +1,6 @@
 <svelte:options runes="{true}" />
 <script>
-    const BACKEND_URL = "192.168.178.168";
+    const BACKEND_URL = "192.168.178.55";
 
     import { onMount } from 'svelte';
 
@@ -11,12 +11,15 @@
     let saetze = $state([[0,0]]);
     let current_satz = $state([0,0]);
     let old_satz = $state([0,0]);
+    let heim_left = $state(true);
+    /**
+     * @type {number[]}
+     */
+    let heim_seite = $state([]);
+    let aufschlag = $state(0);
 
     $effect(() => {
-        const temp = saetze;
-        console.log("effect saetze: ", temp);
-        current_satz = temp[temp.length - 1];
-        console.log("effect current satz: ", current_satz);
+        $inspect("heim_seite: ", heim_seite);
     })
 
     onMount(() => {
@@ -27,7 +30,12 @@
 
         spielstand_SSE.onmessage = function(event) {
             var data = JSON.parse(event.data);
-            saetze = data;
+            heim_left = data["heim_left"];
+            saetze = data["saetze"];
+            current_satz = saetze[saetze.length -1];
+            heim_seite = data["heim_seite"];
+            aufschlag = data["aufschlag"];
+            console.log("aufschlag: ", aufschlag)
         }
 
         teams_SSE.onmessage = function(event) {
@@ -44,34 +52,67 @@
 </script>
 
 
-<div class="Container"> 
-    <Spielfeld {left_team} {right_team} {current_satz} {old_satz}></Spielfeld>
+<div class="Container">
+    <div class="test_spielstand_container">
+        <div class="team_punkte_current_set">
+            {current_satz[0]}
+        </div>
+        <Spielfeld {left_team} {right_team} {aufschlag}></Spielfeld>
+        <div class="team_punkte_current_set">
+            {current_satz[1]}
+        </div>
+    </div>
+    
     <div class="spielstand_container">
         <div class="satz_anzeige_reihe" style="color: orange;">
             <p>Heim:</p>
-            {#each saetze as satz}
-                {#if satz[0] >= 21 && (satz[0]-satz[1] >=2) || satz[0] == 30}
-                    <div class="finished_satz" style="background-color: orange;">
-                        {satz[0]}
-                    </div>
-                {:else}
-                    <div class="satz">
-                        {satz[0]}
-                    </div>
-                {/if}
-            {/each}
+                {#each saetze.slice(0, 3) as satz, i}
+                    {#if heim_seite[i] == 0}
+                        {#if satz[0] >= 21 && (satz[0]-satz[1] >=2) || satz[0] == 30}
+                            <div class="finished_satz" style="background-color: orange;">
+                                {satz[0]}
+                            </div>
+                        {:else}
+                            <div class="satz">
+                                {satz[0]}
+                            </div>
+                        {/if}
+                    {:else}
+                        {#if satz[1] >= 21 && (satz[1]-satz[0] >=2) || satz[1] == 30}
+                            <div class="finished_satz" style="background-color: orange;">
+                                {satz[1]}
+                            </div>
+                        {:else}
+                            <div class="satz">
+                                {satz[1]}
+                            </div>
+                        {/if}
+                    {/if}
+                {/each}
         </div>
         <div class="satz_anzeige_reihe" style="color: green;">
             <p>Gast:</p>
-            {#each saetze as satz}
-                {#if satz[1] >= 21 && (satz[1]-satz[0] >=2) || satz[1] == 30}
-                    <div class="finished_satz" style="background-color: green;">
-                        {satz[1]}
-                    </div>
+            {#each saetze.slice(0, 3) as satz, i}
+                {#if heim_seite[i] == 1}
+                    {#if satz[0] >= 21 && (satz[0]-satz[1] >=2) || satz[0] == 30}
+                        <div class="finished_satz" style="background-color: green;">
+                            {satz[0]}
+                        </div>
+                    {:else}
+                        <div class="satz">
+                            {satz[0]}
+                        </div>
+                    {/if}
                 {:else}
-                    <div class="satz">
-                        {satz[1]}
-                    </div>
+                    {#if satz[1] >= 21 && (satz[1]-satz[0] >=2) || satz[1] == 30}
+                        <div class="finished_satz" style="background-color: green;">
+                            {satz[1]}
+                        </div>
+                    {:else}
+                        <div class="satz">
+                            {satz[1]}
+                        </div>
+                    {/if}
                 {/if}
             {/each}
         </div>
@@ -80,11 +121,24 @@
 
 
 <style>
+    .test_spielstand_container {
+        display: grid;
+        grid-template-columns: 1fr 5fr 1fr;
+    }
+
+    .team_punkte_current_set {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 100px;
+    }
+
+
     .Container {
-        height: 98vh;
+        height: 100vh;
         width: 98vw;
         display: grid;
-        grid-template-rows: 1fr 1fr 1fr;
+        grid-template-rows: 2fr 3fr;
         margin: 0;
         padding: 0;
         box-sizing: border-box;
@@ -110,7 +164,7 @@
         height: 100%;
         display: grid;
         grid-template-columns: 4fr 2fr 2fr 2fr;
-        font-size: 125px;
+        font-size: 150px;
         font-weight: bold;
         justify-content: center;
         align-items: center;

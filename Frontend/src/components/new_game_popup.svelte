@@ -4,34 +4,34 @@
     import { Select, Label } from 'flowbite-svelte';
     import { Input } from 'flowbite-svelte';
 
-    const BACKEND_URL = "192.168.178.168";
+    const BACKEND_URL = "192.168.178.55";
+
+    let {new_game_popup = $bindable()} = $props();
 
     interface Game {
         saetze: number[][];
         current_set: number[];
         left_team: string[];
         right_team: string[];
-        team_mapping: number[];
+        heim_left: boolean;
         set_game_started: (started: boolean) => void;
         set_left_team: (new_team: string[]) => void;
         set_right_team: (new_team: string[]) => void;
-        set_team_mapping: (new_mapping: number[]) => void;
+        set_heim_left: (new_mapping: boolean) => void;
         reset: () => void;
     }
 
     const game = getContext<Game>('game');
-
-    let {new_game_popup = $bindable()} = $props();
 
     let l_player_0 = $state('');
     let l_player_1 = $state('');
     let r_player_0 = $state('');
     let r_player_1 = $state('');
 
-    let selected_team = $state(0);
+    let selected_team = $state(true);
     let teams = [
-        { value: 0, name: 'Heimmannschaft' },
-        { value: 1, name: 'Gastmannschaft' },
+        { value: true, name: 'Heim' },
+        { value: false, name: 'Gast' },
     ];
 
     let selected_aufschlag = $state(0);
@@ -49,7 +49,8 @@
             },
             body: JSON.stringify({
             teams: [[game.left_team],[game.right_team]],
-            team_mapping: game.team_mapping
+            heim_left: game.heim_left,
+            aufschlag: selected_aufschlag
             })
         })
         .then(() => {
@@ -61,7 +62,7 @@
         game.reset();
         game.set_left_team([l_player_0, l_player_1]);
         game.set_right_team([r_player_0, r_player_1]);
-        game.set_team_mapping([selected_team, selected_team == 1 ? 0 : 1]);
+        game.set_heim_left(selected_team);
         new_game_request();
         new_game_popup = !new_game_popup;
     }
@@ -74,17 +75,17 @@
                 <p>Linkes Team</p>
                 <form>
                     <div>
-                        <Label class="text-black text-3xl">First Player</Label>
+                        <Label class="text-black text-3xl">Player 1</Label>
                         <Input bind:value={l_player_0} class="w-full" type="text" required/>
                     </div>
 
                     <div>
-                        <Label class="text-black text-3xl">Second Player</Label>
+                        <Label class="text-black text-3xl">Player 2</Label>
                         <Input bind:value={l_player_1} class="w-full" type="text" required/>
                     </div>
                 </form>
                 <Label class="text-black text-3xl">
-                    Heim / Gast
+                    Heim/Gast
                     <Select class="mt-2" items={teams} bind:value={selected_team} />
                 </Label>
             </div>
@@ -92,11 +93,11 @@
                 <p>Rechtes Team</p>
                 <form>
                     <div>
-                        <Label class="text-black text-3xl">First Player</Label>
+                        <Label class="text-black text-3xl">Player 1</Label>
                         <Input bind:value={r_player_0} class="w-full" type="text" required/>
                     </div>
                     <div>
-                        <Label class="text-black text-3xl">Second Player</Label>
+                        <Label class="text-black text-3xl">Player 2</Label>
                         <Input bind:value={r_player_1} class="w-full" type="text" required/>
                     </div>
                 </form>
@@ -132,7 +133,6 @@
     border-radius: 10px;
     overflow: auto;
     display: grid;
-    grid-template-rows: 8fr 2fr;
     justify-items: center;
     align-items: center;
   }

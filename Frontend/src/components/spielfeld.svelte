@@ -1,21 +1,6 @@
 <svelte:options runes="{true}" />
 <script lang="ts">
-    let { left_team, right_team, current_satz, old_satz = $bindable() } = $props();
-    let aufschlag = $state(0);
-
-    $effect(() => {
-        console.log("Current Satz: ", current_satz);
-        console.log("Old Satz: ", old_satz);
-        if (current_satz[0] > old_satz[0]) {
-            aufschlag = current_satz[0] % 2 === 0 ? 0 : 1;
-            old_satz = current_satz;
-        }
-        if (current_satz[1] > old_satz[1]) {
-            aufschlag = current_satz[1] % 2 === 0 ? 2 : 3;
-            old_satz = current_satz;
-        }
-        console.log("aufschlag: ", aufschlag);
-    });
+    let { left_team, right_team, aufschlag} = $props();
 </script>
 
 <div class="spielfeld_container">
@@ -52,10 +37,11 @@
         justify-content: center;
         align-items: center;
         width: 100%;
-        max-width: 600px;
+        max-width: 800px;
         height: auto;
         overflow: hidden;
         box-sizing: border-box;
+        margin-top: 20px;
     }
 
     .image_container {
