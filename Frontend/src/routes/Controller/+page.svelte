@@ -18,6 +18,7 @@
         aufschlag = $state(0);
         heim_left = $state(0);
         game_started = $state(false);
+        spielart = $state(0);
 
         set_current_set(new_set: number[]) {
             this.current_set = new_set;
@@ -46,6 +47,9 @@
         set_game_started(new_state: boolean) {
             this.game_started = new_state;
         }
+        set_spielart(new_spielart: number) {
+            this.spielart = new_spielart;
+        }
         reset() {
             this.saetze = [[0,0]];
             this.current_set = [0,0];
@@ -55,6 +59,7 @@
             this.old_satz = [0,0];
             this.heim_left = 0;
             this.aufschlag = 0;
+            this.spielart = 0;
         }
     }
 
@@ -65,8 +70,6 @@
     let pos_switch_active = $state(false);
 
     onMount(() => {
-        document.documentElement.style.backgroundColor = 'black';
-
         const spielstand_SSE = new EventSource(`http://${BACKEND_URL}:3000/SSE_spielstand`);
         const teams_SSE = new EventSource(`http://${BACKEND_URL}:3000/SSE_teams`);
 
@@ -82,6 +85,7 @@
             game.set_aufschlag(data.aufschlag);
             game.set_heim_left(data.heim_left);
             game.set_game_started(data.game_started);
+            game.set_spielart(data.spielart);
         });
     
         spielstand_SSE.onmessage = function(event) {
@@ -119,8 +123,6 @@
         new_game_popup = !new_game_popup;
     }
 
-
-
     function req_update_spielstand(team: string, update: number) {
         fetch(`http://${BACKEND_URL}:3000/test_update`,
         {
@@ -138,11 +140,13 @@
     }
 </script>
 
-
+<div class="background">
+    
+</div>
 <div class="Container">
     {#if new_game_popup}
     <PopUp
-        bind:new_game_popup={new_game_popup}>
+        bind:new_game_popup={new_game_popup} bind:selected_spielart={game.spielart}>
     </PopUp>
     {/if}
 
@@ -154,7 +158,9 @@
 
         <div class="menu_container">
             <button onclick={start_new_game}>New Game</button>
-            <button onclick={() => pos_switch_active = !pos_switch_active}>Switch Player</button>
+            {#if game.spielart != 0}
+                <button onclick={() => pos_switch_active = !pos_switch_active}>Switch Player</button>
+            {/if}
         </div>
 
         <div class="Spielfeld_outer_container">
@@ -173,9 +179,9 @@
                             </button>
                         </div>
                     </div>
-                    <div class="team_switch_button_container">
+                    <!--<div class="team_switch_button_container">
                         <img src="Switch_Button.png" alt="Button" onclick={() => update_teams("teams")}/>
-                    </div>
+                    </div>-->
                 </div>
             {:else}
             <Spielfeld left_team={game.left_team} right_team={game.right_team} aufschlag={game.aufschlag}></Spielfeld>
@@ -204,13 +210,25 @@
 
 
 <style>
+    .background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('background.jpeg');
+        background-size: cover;
+        background-position: center;
+        filter: blur(2px);
+        z-index: -1;
+    }
+
     .Container {
         height: 98vh;
         width: 98vw;
         display: grid;
         grid-template-rows: 1fr 3fr 1fr 3fr;
         box-sizing: border-box;
-        background-color: black;
         color: white;
         text-align: center;
         justify-items: center;

@@ -6,7 +6,7 @@
 
     const BACKEND_URL = "192.168.178.55";
 
-    let {new_game_popup = $bindable()} = $props();
+    let {new_game_popup = $bindable(), selected_spielart = $bindable()} = $props();
 
     interface Game {
         saetze: number[][];
@@ -36,8 +36,14 @@
 
     let selected_aufschlag = $state(0);
     let aufschlag = [
-        { value: 0, name: 'links' },
-        { value: 2, name: 'rechts' },
+        { value: 0, name: 'Links' },
+        { value: 2, name: 'Rechts' },
+    ]
+
+    //let selected_spielart = $state(0);
+    let spielart = [
+        { value: 0, name: 'Einzel' },
+        { value: 1, name: 'Doppel' },
     ]
 
     function new_game_request() {       
@@ -50,7 +56,8 @@
             body: JSON.stringify({
             teams: [[game.left_team],[game.right_team]],
             heim_left: game.heim_left,
-            aufschlag: selected_aufschlag
+            aufschlag: selected_aufschlag,
+            spielart: selected_spielart
             })
         })
         .then(() => {
@@ -70,20 +77,33 @@
 
 <div class="overlay">
     <div class="popup">
+        <Label class="text-black text-3xl">
+            Spielart
+            <Select class="mt-2" items={spielart} bind:value={selected_spielart} />
+        </Label>
         <div class="name_grid">
             <div class="grid_columns">
                 <p>Linkes Team</p>
-                <form>
-                    <div>
-                        <Label class="text-black text-3xl">Player 1</Label>
-                        <Input bind:value={l_player_0} class="w-full" type="text" required/>
-                    </div>
+                {#if selected_spielart == 0}
+                    <form>
+                        <div>
+                            <Label class="text-black text-3xl">Player Name</Label>
+                            <Input bind:value={l_player_1} class="w-full" type="text" required/>
+                        </div>
+                    </form>
+                {:else}
+                    <form>
+                        <div>
+                            <Label class="text-black text-3xl">Player 1</Label>
+                            <Input bind:value={l_player_0} class="w-full" type="text" required/>
+                        </div>
 
-                    <div>
-                        <Label class="text-black text-3xl">Player 2</Label>
-                        <Input bind:value={l_player_1} class="w-full" type="text" required/>
-                    </div>
-                </form>
+                        <div>
+                            <Label class="text-black text-3xl">Player 2</Label>
+                            <Input bind:value={l_player_1} class="w-full" type="text" required/>
+                        </div>
+                    </form>
+                {/if}
                 <Label class="text-black text-3xl">
                     Heim/Gast
                     <Select class="mt-2" items={teams} bind:value={selected_team} />
@@ -91,16 +111,25 @@
             </div>
             <div class="grid_columns">
                 <p>Rechtes Team</p>
-                <form>
-                    <div>
-                        <Label class="text-black text-3xl">Player 1</Label>
-                        <Input bind:value={r_player_0} class="w-full" type="text" required/>
-                    </div>
-                    <div>
-                        <Label class="text-black text-3xl">Player 2</Label>
-                        <Input bind:value={r_player_1} class="w-full" type="text" required/>
-                    </div>
-                </form>
+                {#if selected_spielart == 0}
+                    <form>
+                        <div>
+                            <Label class="text-black text-3xl">Player Name</Label>
+                            <Input bind:value={r_player_0} class="w-full" type="text" required/>
+                        </div>
+                    </form>
+                {:else}
+                    <form>
+                        <div>
+                            <Label class="text-black text-3xl">Player 1</Label>
+                            <Input bind:value={r_player_0} class="w-full" type="text" required/>
+                        </div>
+                        <div>
+                            <Label class="text-black text-3xl">Player 2</Label>
+                            <Input bind:value={r_player_1} class="w-full" type="text" required/>
+                        </div>
+                    </form>
+                {/if}
                 <Label class="text-black text-3xl">
                     Aufschlagseite
                     <Select class="mt-2" items={aufschlag} bind:value={selected_aufschlag} />
