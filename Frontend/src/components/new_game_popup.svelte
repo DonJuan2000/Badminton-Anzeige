@@ -4,7 +4,7 @@
     import { Select, Label } from 'flowbite-svelte';
     import { Input } from 'flowbite-svelte';
 
-    const BACKEND_URL = "192.168.178.55";
+    const BACKEND_URL = "192.168.178.168";
 
     let {new_game_popup = $bindable(), selected_spielart = $bindable()} = $props();
 
@@ -46,7 +46,8 @@
         { value: 1, name: 'Doppel' },
     ]
 
-    function new_game_request() {       
+    function new_game_request() {
+        console.log("spielart: ", selected_spielart); 
         fetch(`http://${BACKEND_URL}:3000/new_game`,
         {
             method: "POST",

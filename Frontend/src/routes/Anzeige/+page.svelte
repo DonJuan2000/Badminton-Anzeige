@@ -1,6 +1,6 @@
 <svelte:options runes="{true}" />
 <script>
-    const BACKEND_URL = "192.168.178.55";
+    const BACKEND_URL = "192.168.178.168";
 
     import { onMount } from 'svelte';
 

@@ -386,10 +386,10 @@ app.post('/test_update', json(), (req, res) => {
   broadcastUpdate();
   broadcastUpdate_teams();
   // TODO
-  res.sendStatus(200);
+  res.status(200).json({ message: "OK" });
 });
 
 // Start the server
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on http://0.0.0.0:${PORT}`);
 });

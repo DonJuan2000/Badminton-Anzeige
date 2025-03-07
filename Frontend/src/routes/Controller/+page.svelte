@@ -1,6 +1,6 @@
 <svelte:options runes="{true}" />
 <script lang="ts">
-    const BACKEND_URL = "192.168.178.55";    
+    const BACKEND_URL = "192.168.178.168";    
     
     import { onMount } from 'svelte';
     import { setContext } from 'svelte';
@@ -66,6 +66,12 @@
     let game = new Game();
     setContext('game', game);
     
+    let spielart = $state(0);
+    $effect(() => {
+        game.set_spielart(spielart);
+        console.log("Spielart: ", game.spielart);
+    })
+
     let new_game_popup = $state(false);
     let pos_switch_active = $state(false);
 
@@ -135,8 +141,6 @@
                 update: update
             })
         })
-        .then((response) => response.json())
-        .then((data) => console.log(data));
     }
 </script>
 
@@ -146,7 +150,7 @@
 <div class="Container">
     {#if new_game_popup}
     <PopUp
-        bind:new_game_popup={new_game_popup} bind:selected_spielart={game.spielart}>
+        bind:new_game_popup={new_game_popup} bind:selected_spielart={spielart}>
     </PopUp>
     {/if}
 
