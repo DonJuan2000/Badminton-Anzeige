@@ -13,5 +13,6 @@ RUN npm install
 # Copy the rest of your application files into the container
 COPY . .
 
+EXPOSE 3000
 # Start the server
 CMD ["node", "server.js"]

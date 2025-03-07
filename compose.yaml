@@ -1,0 +1,16 @@
+services:
+  backend:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile
+    image: backend:latest  # Save the built image
+    ports:
+      - "3000:3000" # Backend server is running on port 3000 internal and external
+
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    image: frontend:latest  # Save the built image
+    ports:
+      - "5173:3000" # Map the external port 5173 to the internal port 3000
