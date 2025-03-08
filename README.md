@@ -6,8 +6,6 @@ TBD
 Ensure Docker/Compose is installed. [Docker install](https://docs.docker.com/engine/install/)
 
 ## Install
-
-Cloning and installing the App requires internet access!
 1. Clone the repository.
     ```shell
     git clone https://github.com/DonJuan2000/Badminton-Anzeige.git
@@ -34,7 +32,48 @@ Cloning and installing the App requires internet access!
     should list both images: frontend & backend.
 
 ## Automatic start
+1. Enable auto login on your system
+2. Ensure xdg-open is installed on your system.
+    ```shell
+    sudo apt install xdg-open
+    ```
+3. Give the run script the right to be executed.
+    ```shell
+    chmod +x run.sh
+    ```
+4. Add the script to the Cron-Daemon, to automatically execute on startup.
+    ```shell
+    crontab -e
+    ```
+    At the end of the file add the following line:
+    ```shell
+    @reboot /path/to/run.sh
+    ```
+5. Setup the automatic hotspot start
+    1. Install Wifi-Hotspot-Manager:
+        ```shell
+        sudo apt update && sudo apt install wifi-hotspot-manager
+        ```
+    2. Ensure networkd is installed for managing network interfaces:
+        ```shell
+        sudo apt update && sudo apt install networkd
+        ```
+    3. Open the hotspot configuration file in a text editor e.g. nano
+        ```shell
+        nano /etc/networkd/default/forwarder.conf
+        ```
+    4. Add or modify the following lines:
+        ```shell
+        # Enable forwarding on eth0 interface
+        nmtcpup eth0
+        # Set up DHCP and NAT services on eth0
+        service { type dhcp; }
+        service { type nat; }
+        ```
+        
 
+
+    
 
 # Manual start
 After successfully building the docker images, the app can be manually startet by running

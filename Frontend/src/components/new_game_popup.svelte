@@ -4,7 +4,7 @@
     import { Select, Label } from 'flowbite-svelte';
     import { Input } from 'flowbite-svelte';
 
-    const BACKEND_URL = "192.168.178.168";
+    const BACKEND_URL = import.meta.env.VITE_PUBLIC_IP;
 
     let {new_game_popup = $bindable(), selected_spielart = $bindable()} = $props();
 
@@ -84,7 +84,7 @@
         </Label>
         <div class="name_grid">
             <div class="grid_columns">
-                <p>Linkes Team</p>
+                <p class="underline">Linkes Team</p>
                 {#if selected_spielart == 0}
                     <form>
                         <div>
@@ -105,13 +105,13 @@
                         </div>
                     </form>
                 {/if}
-                <Label class="text-black text-3xl">
+                <Label class="text-black text-2xl">
                     Heim/Gast
                     <Select class="mt-2" items={teams} bind:value={selected_team} />
                 </Label>
             </div>
             <div class="grid_columns">
-                <p>Rechtes Team</p>
+                <p class="underline">Rechtes Team</p>
                 {#if selected_spielart == 0}
                     <form>
                         <div>
@@ -131,7 +131,7 @@
                         </div>
                     </form>
                 {/if}
-                <Label class="text-black text-3xl">
+                <Label class="text-black text-2xl">
                     Aufschlagseite
                     <Select class="mt-2" items={aufschlag} bind:value={selected_aufschlag} />
                 </Label>
@@ -159,7 +159,7 @@
   .popup {
     background: white;
     width: 90%;
-    height: 70%;
+    height: 80%;
     border-radius: 10px;
     overflow: auto;
     display: grid;
@@ -177,7 +177,7 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     color: black;
-    font-size: 50px;
+    font-size: 40px;
   }
 
   .grid_columns {

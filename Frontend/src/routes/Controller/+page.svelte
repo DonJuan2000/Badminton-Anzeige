@@ -1,6 +1,6 @@
 <svelte:options runes="{true}" />
 <script lang="ts">
-    const BACKEND_URL = "192.168.178.168";    
+    const BACKEND_URL = import.meta.env.VITE_PUBLIC_IP;    
     
     import { onMount } from 'svelte';
     import { setContext } from 'svelte';
@@ -220,7 +220,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('background.jpeg');
+        background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('/background.jpeg');
         background-size: cover;
         background-position: center;
         filter: blur(2px);
@@ -275,27 +275,6 @@
                     display: grid;
                     grid-template-columns: 0.5fr 9fr 0.5fr;
                 }
-                    .team_switch_button_container {
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        padding: 0;
-                        height: 100%;
-                        width: 100%;
-                        position: relative;
-                    }
-                    .team_switch_button_container img {
-                        width: auto; /* Force the image to take up the full width of the container */
-                        height: 100%; /* Maintain aspect ratio */
-                        max-height: 100%; /* Prevent the image from exceeding container height */
-                        object-fit: contain; /* Maintain the aspect ratio of the image */
-                        position: absolute; /* Ensure it stays within the container */
-                        cursor: pointer;
-                        transform: rotate(90deg);
-                    }
-                    .team_switch_button_container img:active {
-                        transform: rotate(90deg) scale(0.8); /* Click effect */
-                    }
                         .round-button {
                             display: inline-block;
                             padding: 0;

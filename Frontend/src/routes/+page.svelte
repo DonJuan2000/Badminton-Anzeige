@@ -18,11 +18,14 @@
 <div class="content">
     <h1>Startseite Spielstandanzeige</h1>
     <div class="button_container">
-        <button on:click={() => navigate_to_Anzeige("/Anzeige")}>Anzeige</button>
-        <button on:click={() => navigate_to_Anzeige("/Controller")}>Controller</button>
+        <a href="/Anzeige" target="_blank" rel="noopener noreferrer">
+            <button on:click|stopPropagation={() => navigate_to_Anzeige("/Anzeige")}>Anzeige</button>
+        </a>
+        <a href="/Controller" target="_blank" rel="noopener noreferrer">
+            <button on:click|stopPropagation={() => navigate_to_Anzeige("/Controller")}>Controller</button>
+        </a>
     </div>
 </div>
-
 
 <style>
     /* Background Image with Blur Effect */
@@ -32,7 +35,7 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background-image: url('background.jpeg');
+        background-image: url('/background.jpeg');
         background-size: cover;
         background-position: center;
         filter: blur(2px); /* Adjust blur intensity */

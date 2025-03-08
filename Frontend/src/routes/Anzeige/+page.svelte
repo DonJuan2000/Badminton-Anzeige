@@ -1,6 +1,6 @@
 <svelte:options runes="{true}" />
 <script>
-    const BACKEND_URL = "192.168.178.168";
+    const BACKEND_URL = import.meta.env.VITE_PUBLIC_IP;
 
     import { onMount } from 'svelte';
 
