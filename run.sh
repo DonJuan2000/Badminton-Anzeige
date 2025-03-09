@@ -1,13 +1,16 @@
 #!/bin/bash
 
+# Move to the correct directory
+cd path/to/Badminton-Anzeige || Exit
+
 # Start Compose which start the backend and frontend container
 docker compose up
 
 # start a wifi hotspot
-wifi-hotspot-manager start
+nmcli d wifi hotspot ifname <device> ssid <Hotspot name> password <password>
 
-# sleep for 30 seconds, to ensure everthing is up
-sleep 30
+# sleep for 5 seconds, to ensure everthing is up
+sleep 5
 
 # open the Webpage
-xdg-open localhost:5173/Anzeige
+google-chrome-stable --start-fullscreen http://localhost:5173/Anzeige

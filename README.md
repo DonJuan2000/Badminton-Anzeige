@@ -14,7 +14,12 @@ Ensure Docker/Compose is installed. [Docker install](https://docs.docker.com/eng
     ```shell
     cd Badminton-Anzeige
     ```
-3. Build the docker images (Requires internet access!)
+
+3. Edit the .env file, to contain the correct IP-Address.
+
+    1. The .env file should contain the servers own IP-Address, when starting a hotspot.
+
+4. Build the docker images (Requires internet access!)
 
     1. Give the install script the right to be executed.
         ```shell
@@ -33,43 +38,51 @@ Ensure Docker/Compose is installed. [Docker install](https://docs.docker.com/eng
 
 ## Automatic start
 1. Enable auto login on your system
-2. Ensure xdg-open is installed on your system.
+
+2. Make docker run without sudo rights.
+    1. Add the `docker` group if it doesn't already exist:
     ```shell
-    sudo apt install xdg-open
+    sudo groupadd docker
     ```
+    2. Add the connected user "$USER" to the `docker` group.
+    ```shell
+    sudo gpasswd -a $USER docker
+    ```
+    3. reboot
+
+2. Modify the `run.sh` script.
+
+    1. Edit line 4 with the correct path to the cloned directory.
+    2. Edit line 10 with the desired parameters. 
+
+        1. device: wifi interface name e.g. wlp2s0 (ifconfig)
+        2. ssid: Desired Hotspot name
+        3. password: Desired hotspot password
+
+    3. Edit line 16 to open the desired Webbrowser
+
 3. Give the run script the right to be executed.
     ```shell
     chmod +x run.sh
     ```
-4. Add the script to the Cron-Daemon, to automatically execute on startup.
+
+4. Add a `.desktop` file which executes the script on startup.
+
+    1. Create a `.desktop` file:
     ```shell
-    crontab -e
+    nano ~/.config/autostart/<name>.desktop
     ```
-    At the end of the file add the following line:
+    2. Add the following lines:
     ```shell
-    @reboot /path/to/run.sh
+    [Desktop Entry]
+    Type=Application
+    Name=Open Website
+    Exec=bash -c "path/to/run.sh"
+    Terminal=false
     ```
-5. Setup the automatic hotspot start
-    1. Install Wifi-Hotspot-Manager:
-        ```shell
-        sudo apt update && sudo apt install wifi-hotspot-manager
-        ```
-    2. Ensure networkd is installed for managing network interfaces:
-        ```shell
-        sudo apt update && sudo apt install networkd
-        ```
-    3. Open the hotspot configuration file in a text editor e.g. nano
-        ```shell
-        nano /etc/networkd/default/forwarder.conf
-        ```
-    4. Add or modify the following lines:
-        ```shell
-        # Enable forwarding on eth0 interface
-        nmtcpup eth0
-        # Set up DHCP and NAT services on eth0
-        service { type dhcp; }
-        service { type nat; }
-        ```
+
+
+    
         
 
 
@@ -78,7 +91,7 @@ Ensure Docker/Compose is installed. [Docker install](https://docs.docker.com/eng
 # Manual start
 After successfully building the docker images, the app can be manually startet by running
 ```shell
-(sudo) docker compose up --no-build
+(sudo) docker compose up
 ```
 
 Hit `CTRL+C` to stop Compose.
