@@ -15,11 +15,22 @@ Ensure Docker/Compose is installed. [Docker install](https://docs.docker.com/eng
     cd Badminton-Anzeige
     ```
 
-3. Edit the .env file, to contain the correct IP-Address.
+3. Edit the Frontend/.env file, to contain the correct IP-Address.
 
     1. The .env file should contain the servers own IP-Address, when starting a hotspot.
 
-4. Build the docker images (Requires internet access!)
+4. Make docker run without sudo rights.
+    1. Add the `docker` group if it doesn't already exist:
+    ```shell
+    sudo groupadd docker
+    ```
+    2. Add the connected user "$USER" to the `docker` group.
+    ```shell
+    sudo gpasswd -a $USER docker
+    ```
+    3. reboot
+
+5. Build the docker images (Requires internet access!)
 
     1. Give the install script the right to be executed.
         ```shell
@@ -30,7 +41,7 @@ Ensure Docker/Compose is installed. [Docker install](https://docs.docker.com/eng
         ./install.sh
         ```
 
-4. Ensure the images were built successfully.
+6. Ensure the images were built successfully.
     ```shell
     (sudo) docker image ls
     ```
@@ -38,17 +49,6 @@ Ensure Docker/Compose is installed. [Docker install](https://docs.docker.com/eng
 
 ## Automatic start
 1. Enable auto login on your system
-
-2. Make docker run without sudo rights.
-    1. Add the `docker` group if it doesn't already exist:
-    ```shell
-    sudo groupadd docker
-    ```
-    2. Add the connected user "$USER" to the `docker` group.
-    ```shell
-    sudo gpasswd -a $USER docker
-    ```
-    3. reboot
 
 2. Modify the `run.sh` script.
 

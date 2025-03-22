@@ -98,6 +98,7 @@
             var data = JSON.parse(event.data);
             game.set_current_set(data["saetze"].pop());
             game.set_aufschlag(data["aufschlag"]);
+            game.set_saetze(data["saetze"]);
         }
 
         teams_SSE.onmessage = function(event) {
@@ -130,7 +131,37 @@
     }
 
     function req_update_spielstand(team: string, update: number) {
-        fetch(`http://${BACKEND_URL}:3000/test_update`,
+        let skip = false;
+        if (game.saetze.length >= 2) {
+            let counter = 0;
+            let t1_siege = 0;
+            let t2_siege = 0;
+            game.saetze.forEach((element) => {
+                console.log(element);
+                if (counter % 2 == 0) {
+                if (element[0] == 21) {
+                    t1_siege++;
+                }
+                if (element[1] == 21) {
+                    t2_siege++;
+                }
+                }else{
+                if (element[1] == 21) {
+                    t1_siege++;
+                }
+                if (element[0] == 21) {
+                    t2_siege++;
+                }
+                }
+                counter++;
+            })
+            if (t1_siege == 2 || t2_siege == 2) {
+                skip = true;
+            }
+        }
+
+        if (skip == false) {
+            fetch(`http://${BACKEND_URL}:3000/test_update`,
         {
             method: "POST",
             headers: {
@@ -141,6 +172,7 @@
                 update: update
             })
         })
+        }
     }
 </script>
 

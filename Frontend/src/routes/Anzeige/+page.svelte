@@ -18,9 +18,7 @@
     let heim_seite = $state([]);
     let aufschlag = $state(0);
 
-    $effect(() => {
-        $inspect("heim_seite: ", heim_seite);
-    })
+    let saetze_to_display = $state(3);
 
     onMount(() => {
         document.documentElement.style.backgroundColor = 'black';
@@ -35,7 +33,42 @@
             current_satz = saetze[saetze.length -1];
             heim_seite = data["heim_seite"];
             aufschlag = data["aufschlag"];
-            console.log("aufschlag: ", aufschlag)
+
+            saetze_to_display = 3;
+            console.log("Saetze length", saetze.length)
+            if (saetze.length >= 2) {
+                let counter = 0;
+                let t1_siege = 0;
+                let t2_siege = 0;
+                saetze.forEach((element) => {
+                    console.log(element);
+                    if (counter % 2 == 0) {
+                    if (element[0] == 21) {
+                        t1_siege++;
+                    }
+                    if (element[1] == 21) {
+                        t2_siege++;
+                    }
+                    }else{
+                    if (element[1] == 21) {
+                        t1_siege++;
+                    }
+                    if (element[0] == 21) {
+                        t2_siege++;
+                    }
+                    }
+                    counter++;
+                })
+                if (t1_siege == 2 || t2_siege == 2) {
+                    if (saetze.length == 3) {
+                        saetze_to_display = 2;
+                    }
+                    if (saetze.length == 4) {
+                        saetze_to_display = 3;
+                    }
+                }
+            }
+
         }
 
         teams_SSE.onmessage = function(event) {
@@ -66,7 +99,7 @@
     <div class="spielstand_container">
         <div class="satz_anzeige_reihe" style="color: orange;">
             <p>Heim:</p>
-                {#each saetze.slice(0, 3) as satz, i}
+                {#each saetze.slice(0, saetze_to_display) as satz, i}
                     {#if heim_seite[i] == 0}
                         {#if satz[0] >= 21 && (satz[0]-satz[1] >=2) || satz[0] == 30}
                             <div class="finished_satz" style="background-color: orange;">
@@ -92,7 +125,7 @@
         </div>
         <div class="satz_anzeige_reihe" style="color: green;">
             <p>Gast:</p>
-            {#each saetze.slice(0, 3) as satz, i}
+            {#each saetze.slice(0, saetze_to_display) as satz, i}
                 {#if heim_seite[i] == 1}
                     {#if satz[0] >= 21 && (satz[0]-satz[1] >=2) || satz[0] == 30}
                         <div class="finished_satz" style="background-color: green;">
