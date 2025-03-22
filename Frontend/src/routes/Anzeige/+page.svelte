@@ -156,14 +156,28 @@
 <style>
     .test_spielstand_container {
         display: grid;
-        grid-template-columns: 1fr 5fr 1fr;
+        grid-template-columns: 3fr 8fr 3fr;
+        width: 80%;
+        justify-items: center;
+    }
+
+    .test_spielstand_container > *:nth-child(1) {
+    justify-self: end; /* Aligns the left item to the right */
+    }
+
+    .test_spielstand_container > *:nth-child(2) {
+        justify-self: center; /* Ensures the middle item is centered */
+    }
+
+    .test_spielstand_container > *:nth-child(3) {
+        justify-self: start; /* Aligns the right item to the left */
     }
 
     .team_punkte_current_set {
         display: flex;
         justify-content: center;
         align-items: center;
-        font-size: 150px;
+        font-size: 200px;
     }
 
 
@@ -197,7 +211,7 @@
         height: 100%;
         display: grid;
         grid-template-columns: 4fr 2fr 2fr 2fr;
-        font-size: 150px;
+        font-size: 200px;
         font-weight: bold;
         justify-content: center;
         align-items: center;
