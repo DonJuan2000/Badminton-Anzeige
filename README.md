@@ -1,5 +1,18 @@
 # Digitale Badminton Spielstandsanzeige
-TBD
+
+<p align="center">
+  <strong><span style="font-size: 20px;">Anzeige</span></strong>  
+</p>
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/69a8f14c-24cb-429f-b81b-6e708a18cfc9" alt="Image" width="800">
+</p>
+
+<p align="center">
+  <strong><span style="font-size: 20px;">Controller</span></strong>  
+</p>
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/0515b818-1b01-4d4e-9154-363cf6ae51eb" alt="Image" width="400">
+</p>
 
 
 # Setup
