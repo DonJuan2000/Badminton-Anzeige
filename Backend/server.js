@@ -54,12 +54,12 @@ app.get('/SSE_spielstand', (req, res) => {
   console.log('New client connected to Spielstand SSE');
 
   // Send initial data
-  res.write(`data: ${JSON.stringify({"saetze": game.saetze, "heim_left": game.heim_left, "heim_seite": game.heim_seite, "aufschlag": game.aufschlag})}\n\n`);
+  res.write(`data: ${JSON.stringify({ "saetze": game.saetze, "heim_left": game.heim_left, "heim_seite": game.heim_seite, "aufschlag": game.aufschlag })}\n\n`);
 
   // Remove client on disconnect
   req.on('close', () => {
-      clients_s.splice(clients_s.indexOf(res), 1);
-      console.log('Spielstand SSE Client disconnected');
+    clients_s.splice(clients_s.indexOf(res), 1);
+    console.log('Spielstand SSE Client disconnected');
   });
 });
 
@@ -74,27 +74,27 @@ app.get('/SSE_teams', (req, res) => {
   console.log('New client connected to teams SSE');
 
   // Send initial data
-  res.write(`data: ${JSON.stringify({"left_team": game.left_team, "right_team": game.right_team})}\n\n`);
+  res.write(`data: ${JSON.stringify({ "left_team": game.left_team, "right_team": game.right_team })}\n\n`);
 
   // Remove client on disconnect
   req.on('close', () => {
     clients_t.splice(clients_t.indexOf(res), 1);
-      console.log('Teams SSE Client disconnected');
+    console.log('Teams SSE Client disconnected');
   });
 });
 
 // Functions to broadcast updates using SSE
 function broadcastUpdate() {
-  const data = JSON.stringify({"saetze": game.saetze, "heim_left": game.heim_left, "heim_seite": game.heim_seite, "aufschlag": game.aufschlag});
+  const data = JSON.stringify({ "saetze": game.saetze, "heim_left": game.heim_left, "heim_seite": game.heim_seite, "aufschlag": game.aufschlag });
   clients_s.forEach((client) => {
-      client.write(`data: ${data}\n\n`);
+    client.write(`data: ${data}\n\n`);
   });
 }
 
 function broadcastUpdate_teams() {
-  const data = JSON.stringify({"left_team": game.left_team, "right_team": game.right_team});
+  const data = JSON.stringify({ "left_team": game.left_team, "right_team": game.right_team });
   clients_t.forEach((client) => {
-      client.write(`data: ${data}\n\n`);
+    client.write(`data: ${data}\n\n`);
   });
 }
 
@@ -107,15 +107,15 @@ app.post('/update_teams', json(), (req, res) => {
   const update = req.body.update
   if (update == 'left') {
     game.left_team = [game.left_team[1], game.left_team[0]];
-  }else if (update == 'right') {
-      game.right_team = [game.right_team[1], game.right_team[0]];
-  }else if (update == 'teams') {
-      const temp = game.right_team;
-      game.right_team = game.left_team;
-      game.left_team = temp;
-      game.heim_left = !game.heim_left;
-      const _temp = game.heim_seite.pop()
-      game.heim_seite.push(!_temp);
+  } else if (update == 'right') {
+    game.right_team = [game.right_team[1], game.right_team[0]];
+  } else if (update == 'teams') {
+    const temp = game.right_team;
+    game.right_team = game.left_team;
+    game.left_team = temp;
+    game.heim_left = !game.heim_left;
+    const _temp = game.heim_seite.pop()
+    game.heim_seite.push(!_temp);
   }
   broadcastUpdate_teams(); // Notify all clients
   res.status(200).send({ message: 'Array updated successfully' });
@@ -125,10 +125,10 @@ app.post('/new_game', json(), (req, res) => {
   game.left_team = req.body.teams[0][0];
   game.right_team = req.body.teams[1][0];
   game.aufschlag = req.body.aufschlag;
-  game.saetze = [[0,0]];
-  game.current_set = [0,0];
+  game.saetze = [[0, 0]];
+  game.current_set = [0, 0];
   game.last_point = -1;
-  game.old_satz = [0,0];
+  game.old_satz = [0, 0];
   game.game_started = true;
   game.heim_left = req.body.heim_left;
   game.heim_seite = [];
@@ -141,7 +141,7 @@ app.post('/new_game', json(), (req, res) => {
   res.sendStatus(200);
 });
 
-function update_spielstand_einzel(team,update){
+function update_spielstand_einzel(team, update) {
   let score_left_team = game.current_set[0];
   let score_right_team = game.current_set[1];
   let start_new_game = false;
@@ -161,13 +161,13 @@ function update_spielstand_einzel(team,update){
 
   if (team === "left") {
     score_left_team += update;
-    if (score_left_team >= 21 && (score_left_team-score_right_team >=2) || score_left_team == 30) {
+    if (score_left_team >= 21 && (score_left_team - score_right_team >= 2) || score_left_team == 30) {
       switch_action = 0;
       start_new_game = true;
     }
   } else {
     score_right_team += update;
-    if (score_right_team >= 21 && (score_right_team-score_left_team >=2) || score_right_team == 30) {
+    if (score_right_team >= 21 && (score_right_team - score_left_team >= 2) || score_right_team == 30) {
       switch_action = 0;
       start_new_game = true;
     }
@@ -238,15 +238,15 @@ function update_spielstand_einzel(team,update){
     game.heim_left = !game.heim_left;
   }
 
-  let new_satz = [score_left_team,score_right_team];
+  let new_satz = [score_left_team, score_right_team];
 
   game.saetze.pop();
   game.saetze.push(new_satz);
 
   if (start_new_game) {
-    game.saetze.push([0,0]);
-    game.old_satz = [0,0];
-    game.current_set = [0,0];
+    game.saetze.push([0, 0]);
+    game.old_satz = [0, 0];
+    game.current_set = [0, 0];
   } else {
     game.current_set = new_satz;
   }
@@ -272,10 +272,10 @@ function update_spielstand_einzel(team,update){
     game.left_team = game.right_team;
     game.right_team = temp_left_team;
     game.heim_left = !game.heim_left;
-    game.current_set = [game.current_set[1],game.current_set[0]];
+    game.current_set = [game.current_set[1], game.current_set[0]];
 
     const current_set = game.saetze.pop();
-    game.saetze.push([current_set[1],current_set[0]]);
+    game.saetze.push([current_set[1], current_set[0]]);
     const temp_heim_seite = game.heim_seite[game.heim_seite.length - 1];
     game.heim_seite.pop();
     game.heim_seite.push(!temp_heim_seite);
@@ -334,7 +334,7 @@ function update_spielstand_einzel(team,update){
   }
 }
 
-function update_spielstand(team,update){
+function update_spielstand(team, update) {
   let score_left_team = game.current_set[0];
   let score_right_team = game.current_set[1];
   let start_new_game = false;
@@ -354,7 +354,7 @@ function update_spielstand(team,update){
 
   if (team === "left") {
     score_left_team += update;
-    if (score_left_team >= 21 && (score_left_team-score_right_team >=2) || score_left_team == 30) {
+    if (score_left_team >= 21 && (score_left_team - score_right_team >= 2) || score_left_team == 30) {
       switch_action = 0;
       game.aufschlag = 2;
       game.last_point = "";
@@ -370,7 +370,7 @@ function update_spielstand(team,update){
     }
   } else {
     score_right_team += update;
-    if (score_right_team >= 21 && (score_right_team-score_left_team >=2) || score_right_team == 30) {
+    if (score_right_team >= 21 && (score_right_team - score_left_team >= 2) || score_right_team == 30) {
       switch_action = 0;
       game.aufschlag = 0;
       game.last_point = "";
@@ -401,15 +401,15 @@ function update_spielstand(team,update){
     game.heim_left = !game.heim_left;
   }
 
-  let new_satz = [score_left_team,score_right_team];
+  let new_satz = [score_left_team, score_right_team];
 
   game.saetze.pop();
   game.saetze.push(new_satz);
 
   if (start_new_game) {
-    game.saetze.push([0,0]);
-    game.old_satz = [0,0];
-    game.current_set = [0,0];
+    game.saetze.push([0, 0]);
+    game.old_satz = [0, 0];
+    game.current_set = [0, 0];
   } else {
     game.current_set = new_satz;
   }
@@ -419,10 +419,10 @@ function update_spielstand(team,update){
     game.old_satz = game.current_set;
   }
   if (game.current_set[1] > game.old_satz[1]) {
-      game.aufschlag = game.current_set[1] % 2 === 0 ? 2 : 3;
-      game.old_satz = game.current_set;
+    game.aufschlag = game.current_set[1] % 2 === 0 ? 2 : 3;
+    game.old_satz = game.current_set;
   }
-  
+
 
   // Dritter Satz und noch nicht gewechselt und einer 11 Punkte
   if (game.saetze.length == 3 && game.third_set_switch == false && (game.current_set[0] == 11 || game.current_set[1] == 11)) {
@@ -432,10 +432,10 @@ function update_spielstand(team,update){
     game.left_team = game.right_team;
     game.right_team = temp_left_team;
     game.heim_left = !game.heim_left;
-    game.current_set = [game.current_set[1],game.current_set[0]];
+    game.current_set = [game.current_set[1], game.current_set[0]];
 
     const current_set = game.saetze.pop();
-    game.saetze.push([current_set[1],current_set[0]]);
+    game.saetze.push([current_set[1], current_set[0]]);
     const temp_heim_seite = game.heim_seite[game.heim_seite.length - 1];
     game.heim_seite.pop();
     game.heim_seite.push(!temp_heim_seite);
@@ -463,12 +463,12 @@ app.post('/test_update', json(), (req, res) => {
   const update = req.body.update;
 
 
-  if (game.spielart == 0){
-    update_spielstand_einzel(team,update);
-  }else{
-    update_spielstand(team,update);
+  if (game.spielart == 0) {
+    update_spielstand_einzel(team, update);
+  } else {
+    update_spielstand(team, update);
   }
-  
+
   broadcastUpdate();
   broadcastUpdate_teams();
   // TODO
